@@ -1,0 +1,85 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+# Step 1: Load the data
+def load_data(file_path):
+    """
+    Load the dataset from a CSV file.
+    """
+    try:
+        data = pd.read_csv(file_path)
+        print("Data loaded successfully!")
+        print("First 5 rows of the dataset:\n", data.head())
+        print("\nDataset summary:\n", data.info())
+        return data
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        return None
+
+# Step 2: Handle missing values
+def handle_missing_values(data):
+    """
+    Fill missing values with appropriate strategies (mean for numerical, mode for categorical).
+    """
+    print("\nHandling missing values...")
+    for column in data.columns:
+        missing_count = data[column].isnull().sum()
+        if missing_count > 0:
+            if data[column].dtype == np.number:
+                fill_value = data[column].mean()
+                data[column].fillna(fill_value, inplace=True)
+                print(f"Filled {missing_count} missing values in '{column}' with mean value: {fill_value}")
+            else:
+                fill_value = data[column].mode()[0]
+                data[column].fillna(fill_value, inplace=True)
+                print(f"Filled {missing_count} missing values in '{column}' with mode value: {fill_value}")
+    print("Missing values handled.")
+    return data
+
+# Step 3: Encode categorical variables
+def encode_categorical(data):
+    """
+    Encode categorical features into numerical format using Label Encoding.
+    """
+    print("\nEncoding categorical variables...")
+    label_encoders = {}
+    for column in data.select_dtypes(include=['object']).columns:
+        le = LabelEncoder()
+        data[column] = le.fit_transform(data[column])
+        label_encoders[column] = le
+        print(f"Encoded column '{column}' with LabelEncoder.")
+    print("Categorical variables encoded.")
+    return data, label_encoders
+
+# Step 4: Scale numerical features
+def scale_features(data):
+    """
+    Standardize numerical features to have a mean of 0 and a standard deviation of 1.
+    """
+    print("\nScaling numerical features...")
+    scaler = StandardScaler()
+    numerical_columns = data.select_dtypes(include=['int64', 'float64']).columns
+    data[numerical_columns] = scaler.fit_transform(data[numerical_columns])
+    print("Numerical features scaled with StandardScaler.")
+    print(f"Scaled columns: {list(numerical_columns)}")
+    return data, scaler
+
+# Main Function
+def main():
+    file_path = "data.csv"  # Update this with your dataset's file path
+
+    # Load data
+    data = load_data(file_path)
+    if data is None:
+        return
+
+    # Data preprocessing
+    data = handle_missing_values(data)
+    data, label_encoders = encode_categorical(data)
+    data, scaler = scale_features(data)
+
+    print("\nPreprocessing completed successfully!")
+
+if __name__ == "__main__":
+    main()
