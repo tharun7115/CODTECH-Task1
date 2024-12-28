@@ -23,3 +23,8 @@ To preprocess a dataset by handling missing values, encoding categorical variabl
 -**Pandas**: Facilitates data manipulation and analysis, including loading, transforming, and cleaning datasets.<br>
 -**NumPy**: Provides efficient numerical computations for handling missing values and scaling data.<br>
 -**Scikit-learn**: Offers robust tools for encoding, scaling, and implementing preprocessing techniques.<br>
+
+
+
+
+
